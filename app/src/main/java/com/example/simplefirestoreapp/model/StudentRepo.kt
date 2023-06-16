@@ -42,8 +42,11 @@ class StudentRepo() {
             }
     }
 
-    fun doDeleteStudent(student: Student){
-        dbStudent.document()
+    fun deleteStudent(id: String){
+        dbStudent.document(id)
+            .delete()
+            .addOnSuccessListener { Log.d(TAG, "Document deleted") }
+            .addOnFailureListener { e-> Log.d(TAG,"Error deleting...$e") }
     }
 
 }

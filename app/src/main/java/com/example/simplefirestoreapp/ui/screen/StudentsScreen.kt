@@ -57,7 +57,8 @@ fun StudentsScreen(studentViewModel:StudentViewModel,doAdd:()->Unit){
             ){index, item ->
                 val state = rememberDismissState{
                     if (it == DismissValue.DismissedToStart){
-                        Log.d(TAG, "$item")//TODO: HERE we will do the delete Action
+                        //TODO: HERE we will do the delete Action
+                        item?.let { it1 -> studentViewModel.doDeleteStudent(it1.id) }
                     }
                     true
                 }

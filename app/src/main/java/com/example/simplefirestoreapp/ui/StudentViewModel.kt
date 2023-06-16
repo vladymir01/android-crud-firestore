@@ -55,6 +55,10 @@ class StudentViewModel: ViewModel() {
 
     }
 
+    fun doDeleteStudent(id:String){
+        StudentRepo().deleteStudent(id = id)
+    }
+
     init {
         StudentRepo().doGetStudents { students ->
             studentList.addAll(students)
