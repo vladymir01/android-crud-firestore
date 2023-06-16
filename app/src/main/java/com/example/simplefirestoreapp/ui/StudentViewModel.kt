@@ -39,7 +39,7 @@ class StudentViewModel: ViewModel() {
 
     //function to be called when the user cliks on the add button
     fun doAddStudent(){
-        val newStudent = Student(nameEntered,emailEntered,levelEntered.toInt())
+        val newStudent = Student(name = nameEntered,email = emailEntered,level = levelEntered.toInt())
         Log.d(TAG, "$newStudent")
         addToFirebase(student = newStudent)
     }

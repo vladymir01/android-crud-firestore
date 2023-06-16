@@ -24,10 +24,11 @@ class StudentRepo() {
             .addOnSuccessListener { queryDocumentSnapshots ->
                 val studentList = mutableListOf<Student>()
                 if (!queryDocumentSnapshots.isEmpty) {
-                    val list = queryDocumentSnapshots.documents
-                    for (d in list) {
-                        val c: Student? = d.toObject(Student::class.java)
-                        c?.let { studentList.add(it) }
+                    val result = queryDocumentSnapshots.documents
+                    for (item in result) {
+                        val student: Student? = item.toObject(Student::class.java)
+                        student?.id = item.id
+                        student?.let { studentList.add(it) }
                     }
                     callback(studentList)
                 } else {
@@ -41,4 +42,9 @@ class StudentRepo() {
             }
     }
 
+    fun doDeleteStudent(student: Student){
+        dbStudent.document()
+    }
+
 }
+
