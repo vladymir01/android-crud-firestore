@@ -34,13 +34,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.simplefirestoreapp.TAG
 import com.example.simplefirestoreapp.model.Student
 import com.example.simplefirestoreapp.ui.StudentViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun StudentsScreen(studentViewModel:StudentViewModel,doAdd:()->Unit){
+fun StudentsScreen(studentViewModel:StudentViewModel= viewModel(), doAdd:()->Unit){
+    val studentList = studentViewModel.listOfElements
     Scaffold(
         floatingActionButton = {
                                     FloatingActionButton(onClick = { doAdd()})
@@ -50,14 +52,14 @@ fun StudentsScreen(studentViewModel:StudentViewModel,doAdd:()->Unit){
     {innerPadding->
         LazyColumn(modifier = Modifier.padding(innerPadding)){
             itemsIndexed(
-                items = studentViewModel.studentList,
+                items = studentList,
                 key = {index, item ->
                     item.hashCode()
                 }
             ){index, item ->
                 val state = rememberDismissState{
                     if (it == DismissValue.DismissedToStart){
-                        //TODO: HERE we will do the delete Action
+                        // HERE we will do the delete Action
                         item?.let { it1 -> studentViewModel.doDeleteStudent(it1.id) }
                     }
                     true
@@ -87,29 +89,6 @@ fun StudentsScreen(studentViewModel:StudentViewModel,doAdd:()->Unit){
             }
         }
     }
-
-
-    //region toRemove
-//    { innerPadding->
-//        Column(modifier = Modifier
-//            .padding(innerPadding)
-//            .verticalScroll(rememberScrollState())) {
-//            Text(text = "The list of students")
-//            studentViewModel.studentList.forEach {
-//                it?.let { it1 ->
-//                    ListItem(
-//                        leadingContent = { Icon(Icons.Default.AccountCircle, contentDescription = null)},
-//                        headlineText = { Text(text = it1.name)},
-//                        supportingText = { Text(text = it1.email)},
-//                        trailingContent = { Text(text = it1.level.toString())}
-//                    )
-//                    Divider()
-//                }
-//            }
-//        }
-//    }
-
-    //endregion
 
 }
 

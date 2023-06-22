@@ -9,14 +9,13 @@ import androidx.lifecycle.ViewModel
 import com.example.simplefirestoreapp.TAG
 import com.example.simplefirestoreapp.model.Student
 import com.example.simplefirestoreapp.model.StudentRepo
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
 
 class StudentViewModel: ViewModel() {
 
     //region properties
 
-    var studentList = mutableStateListOf<Student?>()
+    private var _listOfElements = mutableStateListOf<Student>()
+    val listOfElements:List<Student> = _listOfElements
     var nameEntered by mutableStateOf("")
         private set
     var emailEntered by mutableStateOf("")
@@ -48,20 +47,29 @@ class StudentViewModel: ViewModel() {
     private fun addToFirebase(student:Student){
         StudentRepo().addStudentToFirebase(student)
         //Empty the list before getting the list from the database
-        studentList = mutableStateListOf()
+         _listOfElements.clear()
         StudentRepo().doGetStudents { students ->
-            studentList.addAll(students)
+            _listOfElements.addAll(students)
         }
 
     }
 
     fun doDeleteStudent(id:String){
         StudentRepo().deleteStudent(id = id)
+        //Empty the list before getting the list from the database
+        _listOfElements.clear()
+        StudentRepo().doGetStudents { students ->
+            _listOfElements.addAll(students)
+        }
+        Log.d(TAG, "After deletion: $listOfElements")
     }
 
     init {
         StudentRepo().doGetStudents { students ->
-            studentList.addAll(students)
+            _listOfElements.addAll(students)
         }
     }
 }
+
+
+
