@@ -2,6 +2,7 @@ package com.example.simplefirestoreapp.ui.screen
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,13 +36,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.simplefirestoreapp.TAG
 import com.example.simplefirestoreapp.model.Student
 import com.example.simplefirestoreapp.ui.StudentViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun StudentsScreen(studentViewModel:StudentViewModel= viewModel(), doAdd:()->Unit){
+fun StudentsScreen(
+    studentViewModel:StudentViewModel= viewModel(),
+    doAdd:()->Unit,
+    navController: NavController
+
+){
     val studentList = studentViewModel.listOfElements
     Scaffold(
         floatingActionButton = {
@@ -82,7 +89,7 @@ fun StudentsScreen(studentViewModel:StudentViewModel= viewModel(), doAdd:()->Uni
                             )
                         }
                     },
-                    dismissContent = { item?.let { StudentItem(student = it) } },
+                    dismissContent = { item?.let { StudentItem(student = it, navController = navController) } },
                     directions = setOf(DismissDirection.EndToStart)
                 )
                 Divider()
@@ -94,11 +101,15 @@ fun StudentsScreen(studentViewModel:StudentViewModel= viewModel(), doAdd:()->Uni
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StudentItem(student: Student){
+fun StudentItem(student: Student, navController: NavController){
     ListItem(
         leadingContent = { Icon(Icons.Default.AccountCircle, contentDescription = null)},
         headlineText = { Text(student.name)},
         supportingText = { Text(student.email)},
-        trailingContent = { Text(student.level.toString())}
+        trailingContent = { Text(student.level.toString())},
+        modifier = Modifier.clickable(onClick = {
+            Log.d(TAG, "The selected student id: ${student.id}")
+            navController.navigate("Detail/${student.id}")
+        })
     )
 }

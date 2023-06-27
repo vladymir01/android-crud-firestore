@@ -5,6 +5,7 @@ import com.example.simplefirestoreapp.TAG
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
 
 class StudentRepo() {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -49,5 +50,22 @@ class StudentRepo() {
             .addOnFailureListener { e-> Log.d(TAG,"Error deleting...$e") }
     }
 
+    fun getOneStudent(id: String, callback: (student:Student) -> Unit){
+        dbStudent.document(id)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null){
+//                    Log.d(TAG, "Student selected: ${document.id}")
+                    val student = document.toObject<Student>()
+                    student?.id = document.id
+                    student?.let { callback(it) }
+                }else{
+                    Log.d(TAG, "No such data")
+                }
+            }
+            .addOnFailureListener {exception ->
+                Log.d(TAG, "get failed with: ", exception)
+            }
+    }
 }
 

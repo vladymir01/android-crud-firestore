@@ -7,18 +7,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 //import androidx.navigation.NavHost
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.simplefirestoreapp.ui.StudentViewModel
 
 
-enum class TheScreens(){
-    Students,
-    Add
-}
+//enum class TheScreens(){
+//    Students,
+//    Add,
+//    Detail
+//}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,27 +29,41 @@ enum class TheScreens(){
 fun ScreenManager(studentViewModel:StudentViewModel = viewModel()){
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = TheScreens.valueOf(
-        backStackEntry?.destination?.route?:TheScreens.Students.name
-    )
+    val currentScreen = backStackEntry?.destination?.route?:"Students"
+
     Scaffold() {innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = TheScreens.Students.name,
+            startDestination = "Students",
             modifier = Modifier.padding(innerPadding)
         ){
-            composable(route = TheScreens.Students.name){
+            composable(route = "Students"){
                 StudentsScreen(
                     studentViewModel = studentViewModel,
-                    doAdd = {navController.navigate(TheScreens.Add.name)}
+                    doAdd = {navController.navigate("Add")},
+                    navController = navController
                 )
             }
 
-            composable(route = TheScreens.Add.name){
+            composable(route = "Add"){
                 AddStudent(
                     studentViewModel = studentViewModel,
-                    goBack = {navController.navigate(TheScreens.Students.name)}
+                    goBack = {navController.navigate("Students")}
                 )
+            }
+
+            composable(
+                route = "Detail/{item}",
+                arguments = listOf(navArgument("item"){
+                    type = NavType.StringType
+                    defaultValue = "Default"
+                })
+            ){navBackStackEntry->
+                val itemId = navBackStackEntry.arguments?.getString("item")
+                itemId?.let {ViewEditStudent(
+                    item = it,
+                    navController = navController
+                ) }
             }
         }
     }

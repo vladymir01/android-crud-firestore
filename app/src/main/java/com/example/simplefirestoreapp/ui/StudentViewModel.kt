@@ -23,6 +23,9 @@ class StudentViewModel: ViewModel() {
     var levelEntered by mutableStateOf("")
         private set
 
+    var selectedStudent = Student()
+
+
     fun getNameEntered(name:String){
         nameEntered = name
     }
@@ -52,6 +55,12 @@ class StudentViewModel: ViewModel() {
             _listOfElements.addAll(students)
         }
 
+    }
+
+    fun doGetOneStudent(id: String){
+        StudentRepo().getOneStudent(id){student ->
+             selectedStudent = student
+        }
     }
 
     fun doDeleteStudent(id:String){
